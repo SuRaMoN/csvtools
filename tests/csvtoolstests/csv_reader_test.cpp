@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(test_foreach_loop)
 				break;
 
 			case 1:
-				BOOST_CHECK(line.get(0) == L"uio");
-				BOOST_CHECK(line.get(1) == L"pqs");
+				BOOST_CHECK(line[0] == L"uio");
+				BOOST_CHECK(line[1] == L"pqs");
 				break;
 
 			default:

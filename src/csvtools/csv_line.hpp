@@ -22,6 +22,11 @@ public:
 		return fields[i];
 	}
 
+	const std::wstring & operator[](int i) const
+	{
+		return fields[i];
+	}
+
 	virtual ~csv_line()
 	{
 	}
