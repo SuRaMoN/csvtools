@@ -20,17 +20,17 @@ class csv_reader_iterator : public std::iterator<std::input_iterator_tag, const 
 protected:
 	const static int BUFFER_SIZE = 1024;
 
-	typedef boost::shared_ptr<std::wifstream> wifstream_p;
+	typedef boost::shared_ptr<std::wistream> wistream_pt;
 
 	csv_line current_line;
 	boost::shared_ptr<std::wstringstream> field_buffer_p;
-	wifstream_p input_stream_p;
+	wistream_pt input_stream_p;
 	wchar_t delimiter;
 	wchar_t enclosure;
 	wchar_t escape;
 	enum { VALID, PENULTIMATE, END} status;
 
-	csv_reader_iterator(boost::shared_ptr<std::wifstream> a_input_stream_p, wchar_t a_delimiter, wchar_t a_enclosure, wchar_t a_escape)
+	csv_reader_iterator(wistream_pt a_input_stream_p, wchar_t a_delimiter, wchar_t a_enclosure, wchar_t a_escape)
 		: field_buffer_p(new std::wstringstream()),
 		input_stream_p(a_input_stream_p),
 		delimiter(a_delimiter),
@@ -43,16 +43,9 @@ protected:
 		}
 	}
 
-	static csv_reader_iterator new_from_path(boost::filesystem::path a_path, wchar_t a_delimiter, wchar_t a_enclosure, wchar_t a_escape, const std::locale & a_locale)
-	{
-		wifstream_p input_stream_p = wifstream_p(new std::wifstream(a_path.c_str()));
-		input_stream_p->imbue(a_locale);
-		return csv_reader_iterator(input_stream_p, a_delimiter, a_enclosure, a_escape);
-	}
-
 	static csv_reader_iterator new_eof()
 	{
-		csv_reader_iterator eof_iterator(wifstream_p(), L'\0', L'\0', L'\0');
+		csv_reader_iterator eof_iterator(wistream_pt(), L'\0', L'\0', L'\0');
 		eof_iterator.status = END;
 		return eof_iterator;
 	}
@@ -131,7 +124,7 @@ protected:
 				i += 1;
 			}
 			field_buffer_p->write(buffer + start, i - start);
-			if(i < buffer_size) {
+			if(i < buffer_size || input_stream_p->eof()) {
 				add_field_from_field_buffer();
 				return;
 			}
@@ -172,7 +165,7 @@ public:
 				status = END;
 				return *this;
 			case END:
-				throw new std::logic_error("Traying to advance invalid iterator");
+				throw new std::logic_error("Trying to advance invalid iterator");
 		}
 
 		wchar_t buffer[BUFFER_SIZE];
@@ -187,6 +180,11 @@ public:
 		while(true) {
 			field_buffer_p->str(L"");
 			read_field(buffer, buffer_size, i);
+
+			if(i == buffer_size && input_stream_p->eof()) {
+				break;
+			}
+
 			fill_buffer_if_empty(buffer, buffer_size, i);
 
 			// end of csv line, were done :)
@@ -203,7 +201,7 @@ public:
 
 		skip_newlines(buffer, buffer_size, i);
 		if(input_stream_p->eof() && i == buffer_size) {
-			input_stream_p = wifstream_p();
+			input_stream_p = wistream_pt();
 			status = PENULTIMATE;
 		}
 		save_buffer(buffer, buffer_size, i);

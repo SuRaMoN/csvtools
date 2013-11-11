@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+#include "csv_reader_iterator_test_deps.hpp"
 #include <boost/test/unit_test.hpp>
 #include "csvtools/csv_reader.hpp"
 

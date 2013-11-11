@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 project(csvtoolstests)
 
 ## Add boost
-find_package(Boost REQUIRED unit_test_framework system filesystem)
+find_package(Boost REQUIRED unit_test_framework system filesystem locale)
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
 ## include csvtools source headers
@@ -27,8 +27,18 @@ foreach(test_source ${rel_test_sources})
 	add_custom_target(build_and_run_test_${test_source} ${test_name})
 endforeach(test_source)
 
-## add optional capability for precompiled header (linux only)
-add_custom_target(pch ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} -DBOOST_TEST_DYN_LINK -c stdafx.h -o stdafx.h.gch)
+## add optional capability for precompiled header (linux only, sry)
+file(GLOB_RECURSE pch_headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *test_deps.hpp)
+set(pch_objects "")
+foreach(pch_header ${pch_headers})
+	add_custom_command(
+		OUTPUT ${pch_header}.gch
+		MAIN_DEPENDENCY ${pch_header} DEPENDS csvtools_deps.hpp
+		COMMAND ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} -DBOOST_TEST_DYN_LINK -c ${pch_header} -o ${pch_header}.gch
+	)
+	list(APPEND pch_objects ${pch_header}.gch)
+endforeach(pch_header)
+add_custom_target(pch DEPENDS ${pch_objects})
 
 ## add test command
 enable_testing()
