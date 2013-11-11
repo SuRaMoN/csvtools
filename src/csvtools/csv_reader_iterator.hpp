@@ -50,11 +50,23 @@ protected:
 		return eof_iterator;
 	}
 
-	void fill_buffer(wchar_t * buffer, int & buffer_size, int & i)
+	void try_fill_buffer(wchar_t * buffer, int & buffer_size, int & i)
 	{
 		input_stream_p->read(buffer, BUFFER_SIZE);
 		buffer_size = input_stream_p->gcount();
 		i = 0;
+	}
+
+	void try_fill_buffer_if_empty(wchar_t * buffer, int & buffer_size, int & i)
+	{
+		if(i == buffer_size) {
+			try_fill_buffer(buffer, buffer_size, i);
+		}
+	}
+
+	void fill_buffer(wchar_t * buffer, int & buffer_size, int & i)
+	{
+		try_fill_buffer(buffer, buffer_size, i);
 		if(0 == buffer_size) {
 			throw std::logic_error("Invalid csv supplied");
 		}
@@ -147,13 +159,16 @@ protected:
 	void skip_newlines(wchar_t * buffer, int & buffer_size, int & i)
 	{
 		while(true) {
+			try_fill_buffer_if_empty(buffer, buffer_size, i);
+			if(i == buffer_size && input_stream_p->eof()) {
+				return;
+			}
 			while(buffer[i] == L'\n' && i < buffer_size) {
 				i += 1;
 			}
-			if(i < buffer_size || input_stream_p->eof()) {
+			if(i < buffer_size) {
 				return;
 			}
-			fill_buffer(buffer, buffer_size, i);
 		}
 	}
 
@@ -175,6 +190,10 @@ public:
 		load_saved_buffer(buffer, buffer_size);
 		current_line.fields.clear();
 		skip_newlines(buffer, buffer_size, i);
+		if(i == buffer_size && input_stream_p->eof()) {
+			status = END;
+			return *this;
+		}
 
 		// add a column of the csv line in each iteration
 		while(true) {

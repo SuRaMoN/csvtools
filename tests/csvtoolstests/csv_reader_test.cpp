@@ -3,10 +3,9 @@
 #include <boost/test/unit_test.hpp>
 #include "csvtools/csv_reader.hpp"
 
-using namespace boost::filesystem;
-using namespace boost::range;
-using namespace boost::lambda;
 using namespace boost;
+using namespace boost::filesystem;
+using namespace boost::lambda;
 using namespace csvtools;
 using namespace std;
 
@@ -62,52 +61,5 @@ BOOST_AUTO_TEST_CASE(test_new_from_string_stream)
 	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
 }
 
-BOOST_AUTO_TEST_CASE(test_no_final_newline_for_unquoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"abc,def\nhij,klm");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_no_final_newline_for_quoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"abc,def\nhij,\"klm\"");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_intermediate_newlines_for_unquoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"abc,def\n\nhij,klm");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_intermediate_newlines_for_quoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"abc,\"def\"\n\n\"hij\",klm");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_intial_newlines_for_unquoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"\n\nabc,def\nhij,klm");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_intial_newlines_for_quoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"\n\n\"abc\",def\nhij,klm");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_end_newlines_for_unquoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"abc,def\nhij,klm\n\n");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
-BOOST_AUTO_TEST_CASE(test_end_newlines_for_quoted_field)
-{
-	csv_reader reader = csv_reader::new_from_string(L"abc,def\nhij,\"klm\"\n\n");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
-}
-
 BOOST_AUTO_TEST_SUITE_END()
+

@@ -42,5 +42,5 @@ add_custom_target(pch DEPENDS ${pch_objects})
 
 ## add test command
 enable_testing()
-ADD_TEST(NAME csvtoolstests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} COMMAND csvtoolstests)
+ADD_TEST(NAME csvtoolstests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} COMMAND csvtoolstests --log_level)
 
