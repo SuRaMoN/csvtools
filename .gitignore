@@ -1,0 +1,16 @@
+
+## CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+*.gch
+Makefile
+testdata/
+Testing/
+
+## csvtoolstests
+csv_reader_iterator_test
+csv_reader_test
+csvtoolstests
+
