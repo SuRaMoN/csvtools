@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(test_empty_string)
 
 BOOST_AUTO_TEST_CASE(test_only_newlines_empty_string)
 {
-	csv_reader reader = csv_reader::new_from_string(L"");
+	csv_reader reader = csv_reader::new_from_string(L"\n");
 	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 0, "input should contain 2 lines");
 }
 
