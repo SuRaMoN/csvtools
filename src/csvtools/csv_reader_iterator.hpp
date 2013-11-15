@@ -28,7 +28,7 @@ protected:
 	wchar_t delimiter;
 	wchar_t enclosure;
 	wchar_t escape;
-	enum { VALID, PENULTIMATE, END} status;
+	enum { VALID, PENULTIMATE, END } status;
 
 	csv_reader_iterator(wistream_pt a_input_stream_p, wchar_t a_delimiter, wchar_t a_enclosure, wchar_t a_escape)
 		: field_buffer_p(new std::wstringstream()),
@@ -181,6 +181,7 @@ public:
 				return *this;
 			case END:
 				throw new std::logic_error("Trying to advance invalid iterator");
+			case VALID: ;
 		}
 
 		wchar_t buffer[BUFFER_SIZE];
