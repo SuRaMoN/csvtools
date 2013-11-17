@@ -50,7 +50,9 @@ public:
 
 	static csv_reader new_from_string(const std::wstring & a_string, wchar_t a_delimiter = L',', wchar_t a_enclosure = L'"', wchar_t a_escape = L'\\')
 	{
-		return csv_reader(boost::shared_ptr<std::wistream>(new std::wstringstream(a_string)), a_delimiter, a_enclosure, a_escape);
+		boost::shared_ptr<std::wistream> stream_p = boost::shared_ptr<std::wistream>(new std::wstringstream(a_string));
+		//stream_p->exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		return csv_reader(stream_p, a_delimiter, a_enclosure, a_escape);
 	}
 
 	iterator begin()

@@ -51,5 +51,5 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 ## add test command
 enable_testing()
-ADD_TEST(NAME csvtoolstests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} COMMAND csvtoolstests --log_level)
+ADD_TEST(NAME csvtoolstests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} COMMAND csvtoolstests --log_level=all)
 

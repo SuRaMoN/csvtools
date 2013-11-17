@@ -1,4 +1,9 @@
 #!/bin/sh
 
-cmake -Htests/csvtoolstests -Bbuild && make -C build && make -C build test
+set -e
+
+cmake -Htests/csvtoolstests -Bbuild
+make -C build
+cd tests/csvtoolstests/
+../../build/csvtoolstests --log_level=all
 

@@ -50,9 +50,17 @@ protected:
 		return eof_iterator;
 	}
 
+	void assertHealthyInputStream()
+	{
+		if(field_buffer_p->bad() || field_buffer_p->fail()) {
+			throw std::logic_error("abc");
+		}
+	}
+
 	void try_fill_buffer(wchar_t * buffer, int & buffer_size, int & i)
 	{
 		input_stream_p->read(buffer, BUFFER_SIZE);
+		assertHealthyInputStream();
 		buffer_size = input_stream_p->gcount();
 		i = 0;
 	}
@@ -153,6 +161,7 @@ protected:
 	void load_saved_buffer(wchar_t * buffer, int & buffer_size)
 	{
 		field_buffer_p->read(buffer, field_buffer_p->tellp());
+		assertHealthyInputStream();
 		buffer_size = field_buffer_p->gcount();
 	}
 
