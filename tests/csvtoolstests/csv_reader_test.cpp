@@ -61,5 +61,10 @@ BOOST_AUTO_TEST_CASE(test_new_from_string_stream)
 	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 2, "input should contain 2 lines");
 }
 
+BOOST_AUTO_TEST_CASE(test_reading_non_existing_file)
+{
+	BOOST_CHECK_THROW(csv_reader::new_from_utf8_file("testdata/non-existing.csv"), ios_base::failure);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 

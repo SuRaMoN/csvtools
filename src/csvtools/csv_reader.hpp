@@ -2,8 +2,9 @@
 #ifndef CSVTOOLS_CSV_READER_HPP
 #define CSVTOOLS_CSV_READER_HPP
 
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/locale.hpp>
+#include <ios>
 #include <iterator>
 #include <locale>
 
@@ -45,14 +46,15 @@ public:
 
 	static csv_reader new_from_utf8_file(boost::filesystem::path a_path, wchar_t a_delimiter = L',', wchar_t a_enclosure = L'"', wchar_t a_escape = L'\\')
 	{
+		if(! boost::filesystem::exists(a_path)) {
+			throw std::ios_base::failure("Trying to read non existing file");
+		}
 		return csv_reader(a_path, a_delimiter, a_enclosure, a_escape, boost::locale::generator().generate("en_US.UTF-8"));
 	}
 
 	static csv_reader new_from_string(const std::wstring & a_string, wchar_t a_delimiter = L',', wchar_t a_enclosure = L'"', wchar_t a_escape = L'\\')
 	{
-		boost::shared_ptr<std::wistream> stream_p = boost::shared_ptr<std::wistream>(new std::wstringstream(a_string));
-		//stream_p->exceptions(std::ifstream::failbit | std::ifstream::badbit);
-		return csv_reader(stream_p, a_delimiter, a_enclosure, a_escape);
+		return csv_reader(boost::shared_ptr<std::wistream>(new std::wstringstream(a_string)), a_delimiter, a_enclosure, a_escape);
 	}
 
 	iterator begin()
