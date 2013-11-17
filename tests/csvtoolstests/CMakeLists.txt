@@ -27,6 +27,10 @@ foreach(test_source ${rel_test_sources})
 	add_custom_target(build_and_run_test_${test_source} ${test_name})
 endforeach(test_source)
 
+## enable all warnings (linux only, sry)
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W -Wno-long-long -pedantic")
+endif()
 
 ## add optional capability for precompiled header (linux only, sry)
 if(CMAKE_COMPILER_IS_GNUCXX)
