@@ -152,7 +152,7 @@ protected:
 
 	void load_saved_buffer(wchar_t * buffer, int & buffer_size)
 	{
-		field_buffer_p->readsome(buffer, BUFFER_SIZE);
+		field_buffer_p->read(buffer, field_buffer_p->tellp());
 		buffer_size = field_buffer_p->gcount();
 	}
 

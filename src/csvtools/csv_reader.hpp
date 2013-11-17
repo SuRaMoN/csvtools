@@ -48,7 +48,6 @@ public:
 		return csv_reader(a_path, a_delimiter, a_enclosure, a_escape, boost::locale::generator().generate("en_US.UTF-8"));
 	}
 
-
 	static csv_reader new_from_string(const std::wstring & a_string, wchar_t a_delimiter = L',', wchar_t a_enclosure = L'"', wchar_t a_escape = L'\\')
 	{
 		return csv_reader(boost::shared_ptr<std::wistream>(new std::wstringstream(a_string)), a_delimiter, a_enclosure, a_escape);
@@ -72,6 +71,12 @@ public:
 	const_iterator end() const
 	{
 		return iterator::new_eof();
+	}
+
+	void reset()
+	{
+		input_stream_p->clear();
+		input_stream_p->seekg(0);
 	}
 
 	virtual ~csv_reader()

@@ -27,6 +27,11 @@ public:
 		return fields[i];
 	}
 
+	const std::vector<std::wstring>::size_type size() const
+	{
+		return fields.size();
+	}
+
 	virtual ~csv_line()
 	{
 	}

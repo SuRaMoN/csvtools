@@ -5,6 +5,7 @@
 
 using namespace boost::lambda;
 using namespace boost::range;
+using namespace boost;
 using namespace csvtools;
 using namespace std;
 
@@ -111,13 +112,55 @@ BOOST_AUTO_TEST_CASE(test_end_newlines_for_quoted_field)
 BOOST_AUTO_TEST_CASE(test_empty_string)
 {
 	csv_reader reader = csv_reader::new_from_string(L"");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 0, "input should contain 2 lines");
+	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 0, "input should not contain any csv lines");
 }
 
 BOOST_AUTO_TEST_CASE(test_only_newlines_empty_string)
 {
 	csv_reader reader = csv_reader::new_from_string(L"\n");
-	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 0, "input should contain 2 lines");
+	BOOST_CHECK_MESSAGE(count_if(reader, constant(true)) == 0, "input should not contain any csv lines");
+}
+
+BOOST_AUTO_TEST_CASE(test_reset_in_memeory_csv)
+{
+	csv_reader reader = csv_reader::new_from_string(L"abc,def\nhij,klm");
+	BOOST_CHECK(count_if(reader, constant(true)) == 2);
+	reader.reset();
+	BOOST_CHECK(count_if(reader, constant(true)) == 2);
+}
+
+BOOST_AUTO_TEST_CASE(test_reset_from_file)
+{
+	csv_reader reader = csv_reader::new_from_utf8_file("testdata/simple.csv");
+	BOOST_CHECK(count_if(reader, constant(true)) == 2);
+	reader.reset();
+	BOOST_CHECK(count_if(reader, constant(true)) == 2);
+}
+
+BOOST_AUTO_TEST_CASE(test_reading_large_input_simple)
+{
+	csv_reader reader = csv_reader::new_from_utf8_file("testdata/large_input_simple.csv");
+
+	vector<csv_line> lines;
+	boost::copy(reader, std::back_inserter(lines));
+
+	BOOST_CHECK(lines.size() == 7);
+
+	BOOST_CHECK(lines[0][0].length() == 354);
+	BOOST_CHECK(lines[1][0].length() == 360);
+	BOOST_CHECK(lines[2][0].length() == 240);
+	BOOST_CHECK(lines[3][0].length() == 10);
+	BOOST_CHECK(lines[4][0].length() == 10);
+	BOOST_CHECK(lines[5][0].length() == 960);
+	BOOST_CHECK(lines[6][0].length() == 8);
+}
+
+BOOST_AUTO_TEST_CASE(test_reading_large_input_advanced)
+{
+	csv_reader reader = csv_reader::new_from_utf8_file("testdata/large_input_advanced.csv");
+	BOOST_CHECK(count_if(reader, bind(&csv_line::size, _1) == 2) == 209);
+	reader.reset();
+	BOOST_CHECK(count_if(reader, constant(true)) == 209);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

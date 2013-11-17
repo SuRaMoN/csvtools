@@ -27,18 +27,23 @@ foreach(test_source ${rel_test_sources})
 	add_custom_target(build_and_run_test_${test_source} ${test_name})
 endforeach(test_source)
 
+
 ## add optional capability for precompiled header (linux only, sry)
-file(GLOB_RECURSE pch_headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *test_deps.hpp)
-set(pch_objects "")
-foreach(pch_header ${pch_headers})
-	add_custom_command(
-		OUTPUT ${pch_header}.gch
-		MAIN_DEPENDENCY ${pch_header} DEPENDS csvtools_deps.hpp
-		COMMAND ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} -DBOOST_TEST_DYN_LINK -c ${pch_header} -o ${pch_header}.gch
-	)
-	list(APPEND pch_objects ${pch_header}.gch)
-endforeach(pch_header)
-add_custom_target(pch DEPENDS ${pch_objects})
+if(CMAKE_COMPILER_IS_GNUCXX)
+	STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+	SET(_compile_flags ${${_flags_var_name}} )
+	file(GLOB_RECURSE pch_headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *test_deps.hpp)
+	set(pch_objects "")
+	foreach(pch_header ${pch_headers})
+		add_custom_command(
+			OUTPUT ${pch_header}.gch
+			MAIN_DEPENDENCY ${pch_header} DEPENDS csvtools_deps.hpp
+			COMMAND ${CMAKE_CXX_COMPILER} ${_compile_flags} -DBOOST_TEST_DYN_LINK -c ${pch_header} -o ${pch_header}.gch
+		)
+		list(APPEND pch_objects ${pch_header}.gch)
+	endforeach(pch_header)
+	add_custom_target(pch DEPENDS ${pch_objects})
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 ## add test command
 enable_testing()
