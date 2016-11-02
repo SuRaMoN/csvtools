@@ -53,7 +53,7 @@ protected:
 	void assertHealthyInputStream()
 	{
 		if(field_buffer_p->bad() || field_buffer_p->fail()) {
-			throw std::logic_error("abc");
+			throw std::logic_error("Error while reading CSV file");
 		}
 	}
 
