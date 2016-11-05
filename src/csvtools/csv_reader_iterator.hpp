@@ -38,7 +38,7 @@ protected:
 		escape(a_escape),
 		status(VALID)
 	{
-		if(input_stream_p.get() != NULL) {
+		if (input_stream_p.get() != NULL) {
 			operator++();
 		}
 	}
@@ -50,18 +50,15 @@ protected:
 		return eof_iterator;
 	}
 
-	void assertHealthyInputStream()
-	{
-		if(field_buffer_p->bad() || field_buffer_p->fail()) {
-			throw std::logic_error("Error while reading CSV file");
-		}
-	}
-
 	void try_fill_buffer(wchar_t * buffer, int & buffer_size, int & i)
 	{
 		input_stream_p->read(buffer, BUFFER_SIZE);
-		assertHealthyInputStream();
-		buffer_size = input_stream_p->gcount();
+
+		if (input_stream_p->fail() && ! input_stream_p->eof()) {
+			throw std::logic_error("Error while reading CSV file");
+		}
+
+		buffer_size = (int) input_stream_p->gcount();
 		i = 0;
 	}
 
@@ -75,14 +72,14 @@ protected:
 	void fill_buffer(wchar_t * buffer, int & buffer_size, int & i)
 	{
 		try_fill_buffer(buffer, buffer_size, i);
-		if(0 == buffer_size) {
+		if (0 == buffer_size) {
 			throw std::logic_error("Invalid csv supplied");
 		}
 	}
 
 	void fill_buffer_if_empty(wchar_t * buffer, int & buffer_size, int & i)
 	{
-		if(i == buffer_size) {
+		if (i == buffer_size) {
 			fill_buffer(buffer, buffer_size, i);
 		}
 	}
@@ -161,21 +158,25 @@ protected:
 	void load_saved_buffer(wchar_t * buffer, int & buffer_size)
 	{
 		field_buffer_p->read(buffer, field_buffer_p->tellp());
-		assertHealthyInputStream();
-		buffer_size = field_buffer_p->gcount();
+
+		if (field_buffer_p->bad() || field_buffer_p->fail()) {
+			throw std::logic_error("Error while writing CSV file");
+		}
+
+		buffer_size = (int) field_buffer_p->gcount();
 	}
 
 	void skip_newlines(wchar_t * buffer, int & buffer_size, int & i)
 	{
-		while(true) {
+		while (true) {
 			try_fill_buffer_if_empty(buffer, buffer_size, i);
-			if(i == buffer_size && input_stream_p->eof()) {
+			if (i == buffer_size && input_stream_p->eof()) {
 				return;
 			}
-			while(buffer[i] == L'\n' && i < buffer_size) {
+			while (buffer[i] == L'\n' && i < buffer_size) {
 				i += 1;
 			}
-			if(i < buffer_size) {
+			if (i < buffer_size) {
 				return;
 			}
 		}
@@ -184,7 +185,7 @@ protected:
 public:
 	csv_reader_iterator & operator++()
 	{
-		switch(status) {
+		switch (status) {
 			case PENULTIMATE:
 				status = END;
 				return *this;
@@ -200,17 +201,17 @@ public:
 		load_saved_buffer(buffer, buffer_size);
 		current_line.fields.clear();
 		skip_newlines(buffer, buffer_size, i);
-		if(i == buffer_size && input_stream_p->eof()) {
+		if (i == buffer_size && input_stream_p->eof()) {
 			status = END;
 			return *this;
 		}
 
 		// add a column of the csv line in each iteration
-		while(true) {
+		while (true) {
 			field_buffer_p->str(L"");
 			read_field(buffer, buffer_size, i);
 
-			if(i == buffer_size && input_stream_p->eof()) {
+			if (i == buffer_size && input_stream_p->eof()) {
 				break;
 			}
 
@@ -229,7 +230,7 @@ public:
 		}
 
 		skip_newlines(buffer, buffer_size, i);
-		if(input_stream_p->eof() && i == buffer_size) {
+		if (input_stream_p->eof() && i == buffer_size) {
 			input_stream_p = wistream_pt();
 			status = PENULTIMATE;
 		}

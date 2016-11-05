@@ -6,6 +6,7 @@ project(csvtoolstests)
 ## Add boost
 find_package(Boost REQUIRED unit_test_framework system filesystem locale)
 add_definitions(-DBOOST_TEST_DYN_LINK)
+add_definitions(-DBOOST_ALL_NO_LIB)
 
 ## include csvtools source headers
 include_directories(../../src)
@@ -16,6 +17,7 @@ file(GLOB_RECURSE test_sources *test.cpp)
 ## create and link main test executable
 add_executable(csvtoolstests main.cpp ${test_sources})
 target_link_libraries(csvtoolstests ${Boost_LIBRARIES})
+target_include_directories(csvtoolstests PRIVATE ${Boost_INCLUDE_DIR})
 
 ## create a exectuable for each test to avoid rebuilding everything for one test
 file(GLOB_RECURSE rel_test_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *test.cpp)
