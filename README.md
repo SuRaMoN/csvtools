@@ -8,7 +8,7 @@ the only dependecies.
 # How to compile?
 It's header only, so it can't compile.
 If you want to run the tests, just run ./run_tests.sh it will build and run.
-If you want to compile them on w$indows, call cmake and it will create a sln file for you.
+If you want to compile them on w$ndows, call cmake and it will create a sln file for you.
 
 # Example usage
 ```
