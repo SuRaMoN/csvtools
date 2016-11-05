@@ -10,33 +10,38 @@ namespace csvtools {
 class csv_line
 {
 protected:
-	std::vector<std::wstring> fields;
+    std::vector<std::wstring> fields;
 
-	csv_line()
-	{
-	}
+    csv_line()
+    {
+    }
 
 public:
-	const std::wstring & get(int i) const
-	{
-		return fields[i];
-	}
+    const std::wstring & get(int i) const
+    {
+        return fields[i];
+    }
 
-	const std::wstring & operator[](int i) const
-	{
-		return fields[i];
-	}
+    const std::wstring & operator[](int i) const
+    {
+        return fields[i];
+    }
 
-	std::vector<std::wstring>::size_type size() const
-	{
-		return fields.size();
-	}
+    std::vector<std::wstring>::size_type size() const
+    {
+        return fields.size();
+    }
 
-	virtual ~csv_line()
-	{
-	}
+    const std::vector<std::wstring> & data() const
+    {
+        return fields;
+    }
 
-	friend class csv_reader_iterator;
+    virtual ~csv_line()
+    {
+    }
+
+    friend class csv_reader_iterator;
 };
 
 }
