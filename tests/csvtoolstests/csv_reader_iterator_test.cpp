@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(test_simple_read_with_quoted_columns)
 	++i;
 
 	BOOST_CHECK((*i).get(0) == L"uio");
-	BOOST_CHECK((*i).get(1) == L"p,q\"s\\");
+	BOOST_CHECK((*i).get(1) == L"p,q\"s\"");
 
 	BOOST_CHECK(i != end);
 
