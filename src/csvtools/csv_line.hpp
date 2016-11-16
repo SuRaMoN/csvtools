@@ -42,6 +42,7 @@ public:
     }
 
     friend class csv_reader_iterator;
+    friend class csv_reader;
 };
 
 }

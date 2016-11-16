@@ -1,16 +1,2 @@
 
-## CMake
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-CTestTestfile.cmake
-*.gch
-Makefile
-Testing/
-
-## csvtoolstests
-csv_reader_iterator_test
-csv_reader_test
-tests/csvtoolstests/csvtoolstests
-
-
+build
